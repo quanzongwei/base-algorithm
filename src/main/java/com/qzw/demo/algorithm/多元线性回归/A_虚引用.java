@@ -1,7 +1,5 @@
 package com.qzw.demo.algorithm.多元线性回归;
 
-import com.sun.corba.se.impl.encoding.OSFCodeSetRegistry;
-
 import java.lang.ref.WeakReference;
 
 
@@ -35,6 +33,7 @@ public class A_虚引用 {
             super(referent);
             this.value = value;
         }
+
         @Override
         public String toString() {
             return "Entry{" +
@@ -44,9 +43,11 @@ public class A_虚引用 {
                     '}';
         }
     }
+
     static class ThreadLocalMy {
 
     }
+
     static class MapContainer {
         private Entry entry;
 
