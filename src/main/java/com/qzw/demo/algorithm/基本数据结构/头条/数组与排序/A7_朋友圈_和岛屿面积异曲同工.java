@@ -1,4 +1,4 @@
-package com.qzw.demo.algorithm.基本数据结构.头条;
+package com.qzw.demo.algorithm.基本数据结构.头条.数组与排序;
 
 /**
  * 1. 和最大岛屿面积异曲同工

@@ -1,4 +1,4 @@
-package com.qzw.demo.algorithm.基本数据结构.头条;
+package com.qzw.demo.algorithm.基本数据结构.头条.数组与排序;
 
 /**
  * Created by Administrator on 2019/3/11 0011.

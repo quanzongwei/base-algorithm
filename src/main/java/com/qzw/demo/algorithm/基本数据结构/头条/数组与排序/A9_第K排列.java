@@ -1,4 +1,4 @@
-package com.qzw.demo.algorithm.基本数据结构.头条;
+package com.qzw.demo.algorithm.基本数据结构.头条.数组与排序;
 
 import org.junit.Assert;
 import org.junit.Test;
