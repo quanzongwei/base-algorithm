@@ -29,11 +29,13 @@ public class MD5Utils {
         return null;
     }
 
+    /**
+     * Md5加密后的数据: 16字节
+     */
     public static byte[] getMd5Bytes(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] messageDigest = md.digest(input.getBytes());
-            System.out.println(messageDigest.length);
             return messageDigest;
         }
 
@@ -43,12 +45,13 @@ public class MD5Utils {
         }
     }
 
-
+    /**
+     * Md5加密后的数据: 16字节
+     */
     public static byte[] getMd5BytesWithByteInput(byte[] input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] messageDigest = md.digest(input);
-            System.out.println(messageDigest.length);
             return messageDigest;
         }
 
