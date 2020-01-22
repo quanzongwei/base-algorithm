@@ -26,7 +26,7 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
      */
     public void encodeFileOrDir(File fileOrDir, DirChooseEnum dirChooseEnum) {
         if (!fileOrDir.exists()) {
-            throw new MaskException(1000, "文件或者文件夹不存在解密加密失败");
+            throw new MaskException(1000, "文件或者文件夹不存在解密加密失败,"+fileOrDir.getPath());
         }
         if (isFileMaskFile(fileOrDir)) {
             log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
@@ -70,7 +70,7 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
      */
     public void decodeFileOrDir(File fileOrDir, DirChooseEnum dirChooseEnum) {
         if (!fileOrDir.exists()) {
-            throw new MaskException(10000, "文件或者文件夹不存在,解密失败");
+            throw new MaskException(10000, "文件或者文件夹不存在,解密失败, "+fileOrDir.getPath());
         }
         if (isFileMaskFile(fileOrDir)) {
             log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
@@ -222,7 +222,6 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
         if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_OR_DIR_NAME_ENCODE)) {
             //私有数据文件重命名
             boolean b = privateDataFile.renameTo(new File(privateDataFile.getParent() + File.separatorChar + new String(result1)));
-            System.out.println("私有数据文件是否加密成功" + b);
             log.info("私有数据文件是否加密成功:{}", b);
 
         }
