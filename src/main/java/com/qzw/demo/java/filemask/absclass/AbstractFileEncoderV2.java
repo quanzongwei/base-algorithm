@@ -3,7 +3,6 @@ package com.qzw.demo.java.filemask.absclass;
 import com.qzw.demo.java.filehide.ByteUtil;
 import com.qzw.demo.java.filemask.enums.DirChooseEnum;
 import com.qzw.demo.java.filemask.enums.FileEncoderTypeEnum;
-import com.qzw.demo.java.filemask.enums.MaskEnum;
 import com.qzw.demo.java.filemask.exception.MaskException;
 import com.qzw.demo.java.filemask.interfaces.FileEncoderType;
 import com.qzw.demo.java.filemask.interfaces.PasswordHandler;
@@ -22,10 +21,86 @@ import java.util.stream.Collectors;
 @Log4j2
 public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEncoderType {
 
-    protected abstract void encodeFile(File fileOrDir, DirChooseEnum chooseEnum);
+    /**
+     * entry method
+     */
+    public void encodeFileOrDir(File fileOrDir, DirChooseEnum dirChooseEnum) {
+        if (!fileOrDir.exists()) {
+            throw new MaskException(1000, "文件或者文件夹不存在解密加密失败");
+        }
+        if (isFileMaskFile(fileOrDir)) {
+            log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
+            return;
+        }
+        if (dirChooseEnum.equals(DirChooseEnum.FILE_ONLY)) {
 
-    protected abstract void decodeFile(File fileOrDir, DirChooseEnum chooseEnum);
+            this.mkPrivateDirIfNotExists(fileOrDir);
+            executeEncrypt(fileOrDir);
+        } else if (dirChooseEnum.equals(DirChooseEnum.CURRENT_DIR_ONLY)) {
 
+            this.mkPrivateDirIfNotExists(fileOrDir);
+            File[] files = fileOrDir.listFiles();
+            if (files != null && files.length > 0) {
+                this.mkPrivateDirIfNotExists(files[0]);
+                for (File file : files) {
+                    executeEncrypt(file);
+                }
+            }
+            executeEncrypt(fileOrDir);
+        } else if (dirChooseEnum.equals(DirChooseEnum.CASCADE_DIR)) {
+            this.mkPrivateDirIfNotExists(fileOrDir);
+            File[] files = fileOrDir.listFiles();
+            if (files != null && files.length > 0) {
+                this.mkPrivateDirIfNotExists(files[0]);
+                for (File file : files) {
+                    //cascade directory
+                    if (file.isDirectory()) {
+                        encodeFileOrDir(file, DirChooseEnum.CASCADE_DIR);
+                        continue;
+                    }
+                    executeEncrypt(file);
+                }
+            }
+            executeEncrypt(fileOrDir);
+        }
+    }
+
+    /**
+     * entry method
+     */
+    public void decodeFileOrDir(File fileOrDir, DirChooseEnum dirChooseEnum) {
+        if (!fileOrDir.exists()) {
+            throw new MaskException(10000, "文件或者文件夹不存在,解密失败");
+        }
+        if (isFileMaskFile(fileOrDir)) {
+            log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
+            return;
+        }
+        if (dirChooseEnum.equals(DirChooseEnum.FILE_ONLY)) {
+            executeDecrypt(fileOrDir);
+        } else if (dirChooseEnum.equals(DirChooseEnum.CURRENT_DIR_ONLY)) {
+            File[] files = fileOrDir.listFiles();
+            if (files != null && files.length > 0) {
+                for (File file : files) {
+                    executeDecrypt(file);
+                }
+            }
+            executeDecrypt(fileOrDir);
+        } else if (dirChooseEnum.equals(DirChooseEnum.CASCADE_DIR)) {
+            File[] files = fileOrDir.listFiles();
+            if (files != null && files.length > 0) {
+                for (File file : files) {
+                    //cascade directory
+                    if (file.isDirectory()) {
+                        decodeFileOrDir(file, DirChooseEnum.CASCADE_DIR);
+                        continue;
+                    }
+                    executeDecrypt(file);
+                }
+            }
+            executeDecrypt(fileOrDir);
+        }
+    }
 
     protected boolean isFileMaskFile(File file) {
         boolean fileMask = file.getPath().contains(".fileMask");
@@ -60,10 +135,6 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
     }
 
     protected void executeEncrypt(File fileOrDir) {
-        if (isFileMaskFile(fileOrDir)) {
-            log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
-            return;
-        }
         String pdf = fileOrDir.getParent() + File.separatorChar + ".fileMask" + File.separatorChar + fileOrDir.getName();
         File privateDataFile = new File(pdf);
         boolean exists = privateDataFile.exists();
@@ -132,14 +203,14 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
                 raf.write(result0);
                 //
             } else if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_HEADER_ENCODE)) {
-                raf.seek(16+1);
+                raf.seek(16 + 1);
                 raf.write((byte) 0x01);
                 result0 = getResultByMap(result0, encodeMap, true);
                 raf.seek(32 + 256);
                 // 32 bytes
                 raf.write(result0);
             } else if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_CONTENT_ENCODE)) {
-                raf.seek(16+2);
+                raf.seek(16 + 2);
                 raf.write((byte) 0x01);
                 // no operation for return bytes, it is only a success flag for this FileEncoderType
             }
@@ -271,11 +342,6 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
 
 
     protected void executeDecrypt(File fileOrDir) {
-        if (isFileMaskFile(fileOrDir)) {
-            log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
-            return;
-        }
-
         String pdf = fileOrDir.getParent() + File.separatorChar + ".fileMask" + File.separatorChar + fileOrDir.getName();
         File privateDataFile = new File(pdf);
         if (!privateDataFile.exists()) {
