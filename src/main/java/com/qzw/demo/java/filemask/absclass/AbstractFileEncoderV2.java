@@ -26,7 +26,7 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
      */
     public void encodeFileOrDir(File fileOrDir, DirChooseEnum dirChooseEnum) {
         if (!fileOrDir.exists()) {
-            throw new MaskException(1000, "文件或者文件夹不存在解密加密失败,"+fileOrDir.getPath());
+            throw new MaskException(1000, "文件或者文件夹不存在解密加密失败," + fileOrDir.getPath());
         }
         if (isFileMaskFile(fileOrDir)) {
             log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
@@ -37,7 +37,6 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
             this.mkPrivateDirIfNotExists(fileOrDir);
             executeEncrypt(fileOrDir);
         } else if (dirChooseEnum.equals(DirChooseEnum.CURRENT_DIR_ONLY)) {
-
             this.mkPrivateDirIfNotExists(fileOrDir);
             File[] files = fileOrDir.listFiles();
             if (files != null && files.length > 0) {
@@ -70,7 +69,7 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
      */
     public void decodeFileOrDir(File fileOrDir, DirChooseEnum dirChooseEnum) {
         if (!fileOrDir.exists()) {
-            throw new MaskException(10000, "文件或者文件夹不存在,解密失败, "+fileOrDir.getPath());
+            throw new MaskException(10000, "文件或者文件夹不存在,解密失败, " + fileOrDir.getPath());
         }
         if (isFileMaskFile(fileOrDir)) {
             log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
@@ -135,11 +134,16 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
     }
 
     protected void executeEncrypt(File fileOrDir) {
+        FileEncoderTypeEnum fileEncoderType = getFileEncoderType();
+        if (fileOrDir.isDirectory() && !fileEncoderType.isSupportEncryptDir()) {
+            // 加密方式不支持加密文件夹, 直接跳过, 不需要任何日志
+            return;
+        }
         String pdf = fileOrDir.getParent() + File.separatorChar + ".fileMask" + File.separatorChar + fileOrDir.getName();
         File privateDataFile = new File(pdf);
         boolean exists = privateDataFile.exists();
         byte[] result1 = null;
-        FileEncoderTypeEnum fileEncoderType = null;
+
         try (RandomAccessFile raf = new RandomAccessFile(privateDataFile, "rw")) {
             byte[] encodeMap = new byte[256];
             //1. 合法性校验
@@ -187,13 +191,12 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
             }
             byte[][] result = encryptOriginFile(fileOrDir, extraParam);
             if (result == null) {
-//                log.info("加密失败,{}", fileOrDir.getPath());
+                // 加密不成功
                 return;
             }
             byte[] result0 = result[0];
             result1 = result[1];
             //3. 私有数据文件处理
-            fileEncoderType = getFileEncoderType();
             if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_OR_DIR_NAME_ENCODE)) {
                 raf.seek(16);
                 raf.write((byte) 0x01);
@@ -260,7 +263,6 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
     // exists at least one
     private boolean encodedByCurrentUserUseTheSameType(byte[] flags, File fileOrDir) {
         FileEncoderTypeEnum fileEncoderType = getFileEncoderType();
-        int index = fileEncoderType.getFlagRelativeIndex();
         List<FileEncoderTypeEnum> encodedTypeList = new ArrayList<>();
         if (flags[0] == (byte) 0x01) {
             encodedTypeList.add(FileEncoderTypeEnum.FILE_OR_DIR_NAME_ENCODE);
@@ -341,13 +343,17 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
 
 
     protected void executeDecrypt(File fileOrDir) {
+        FileEncoderTypeEnum fileEncoderType = getFileEncoderType();
+        if (fileOrDir.isDirectory() && !fileEncoderType.isSupportEncryptDir()) {
+            // 加密方式不支持加密文件夹, 直接跳过, 不需要任何日志
+            return;
+        }
         String pdf = fileOrDir.getParent() + File.separatorChar + ".fileMask" + File.separatorChar + fileOrDir.getName();
         File privateDataFile = new File(pdf);
         if (!privateDataFile.exists()) {
             log.info("文件从未加密过, 无需解密, {}", fileOrDir.getPath());
             return;
         }
-        FileEncoderTypeEnum fileEncoderTypeEnum = null;
         // 加密方式一
         String originName = null;
         try (RandomAccessFile raf = new RandomAccessFile(privateDataFile, "rw")) {
@@ -362,21 +368,41 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
             byte[] md51 = new byte[16];
             raf.read(md51);
             md51 = xorBySecretKey(md51);
-            //是否使用指定方式加密
             if (!Arrays.equals(md51, getMd51())) {
                 log.info("当前文件已被其他用户加密或该文件未加密, 您无法执行解密操作,{}", fileOrDir.getPath());
                 // io 没有关闭?
                 raf.close();
                 return;
             }
+            //是否使用指定方式加密
+            fileEncoderType = getFileEncoderType();
+            raf.seek(16);
+            byte[] flagBytes = new byte[3];
+            raf.read(flagBytes);
+            if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_OR_DIR_NAME_ENCODE)) {
+                if (flagBytes[0] != (byte) 0x01) {
+                    log.info("文件未使用方式1进行加密, 使用方式1进行解密失败,{}", fileOrDir.getPath());
+                    return;
+                }
+            } else if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_HEADER_ENCODE)) {
+                if (flagBytes[1] != (byte) 0x01) {
+                    log.info("文件未使用方式2进行加密, 使用方式2进行解密失败,{}", fileOrDir.getPath());
+                    return;
+                }
+
+            } else if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_CONTENT_ENCODE)) {
+                if (flagBytes[2] != (byte) 0x01) {
+                    log.info("文件未使用方式3进行加密, 使用方式3进行解密失败,{}", fileOrDir.getPath());
+                    return;
+                }
+            }
             //执行解密,并处理私有数据
             raf.seek(32);
             byte[] encodeMap = new byte[256];
             raf.read(encodeMap);
             encodeMap = xorBySecretKey(encodeMap);
-            fileEncoderTypeEnum = getFileEncoderType();
             // 加密方式1
-            if (fileEncoderTypeEnum.equals(FileEncoderTypeEnum.FILE_OR_DIR_NAME_ENCODE)) {
+            if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_OR_DIR_NAME_ENCODE)) {
                 raf.seek(32 + 256 + 32);
                 byte[] extraParam = new byte[(int) (raf.length() - (32 + 256 + 32))];
                 raf.read(extraParam);
@@ -392,9 +418,10 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
                 }
             }
             //加密方式为2
-            if (fileEncoderTypeEnum.equals(FileEncoderTypeEnum.FILE_HEADER_ENCODE)) {
+            if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_HEADER_ENCODE)) {
                 raf.seek(32 + 256);
                 byte[] extraParam = new byte[32];
+                //raf对于超出文件长度的内容, 读不出任何数据
                 raf.read(extraParam);
                 extraParam = getResultByMap(extraParam, encodeMap, false);
                 if (decryptOriginFile(fileOrDir, extraParam)) {
@@ -403,7 +430,7 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
                 }
             }
             //加密方式为3
-            if (fileEncoderTypeEnum.equals(FileEncoderTypeEnum.FILE_CONTENT_ENCODE)) {
+            if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_CONTENT_ENCODE)) {
                 if (decryptOriginFile(fileOrDir, encodeMap)) {
                     raf.seek(16 + 2);
                     raf.write(0x00);
@@ -414,7 +441,7 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
             return;
         }
         // IO操作完成后才可以执行重命名操作
-        if (fileEncoderTypeEnum.equals(FileEncoderTypeEnum.FILE_OR_DIR_NAME_ENCODE)) {
+        if (fileEncoderType.equals(FileEncoderTypeEnum.FILE_OR_DIR_NAME_ENCODE)) {
             //私有数据文件重命名
             boolean b = privateDataFile.renameTo(new File(privateDataFile.getParent() + File.separatorChar + originName));
             log.info("私有数据文件是否重命名成功:{}", b);

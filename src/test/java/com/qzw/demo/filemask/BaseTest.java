@@ -2,7 +2,6 @@ package com.qzw.demo.filemask;
 
 import com.qzw.demo.java.filemask.exception.MaskException;
 import org.junit.Before;
-import sun.misc.OSEnvironment;
 
 import java.io.*;
 
@@ -17,11 +16,17 @@ public class BaseTest {
         return file;
     }
 
-    protected File subFile() {
+    protected File firstDirFile() {
         File file = new File("D:\\Data\\测试\\test\\dir");
         return file;
     }
-    protected File subFileEncrypted(int number) {
+
+    protected File firstFileFile() {
+        File file = new File("D:\\Data\\测试\\test\\dir\\file.txt");
+        return file;
+    }
+
+    protected File firstDirFileEncryptedByType1(int number) {
         File file = new File("D:\\Data\\测试\\test\\nDDir" + number);
         return file;
     }
@@ -34,9 +39,14 @@ public class BaseTest {
     public static char sp = File.separatorChar;
     String text = "admin中华人民共和国admin中华人民共和国admin中华人民共和国admin中华人民共和国admin中华人民共和国admin中华人民共和国";
 
+    /**
+     * 创建level层级的文件, 除了第一层为dir一个文件夹之外, 其他都是两个一个dir文件夹,一个file文件.
+     *
+     * @return 文件和文件夹总数, 包括base文件夹下的第一个dir
+     */
     protected int createDirAndFile(String path, int level) throws IOException {
         boolean isFirstLevel = true;
-        int returnValue = (level - 1) * 2 + 1-1;
+        int returnValue = (level - 1) * 2 + 1 - 1;
         while (level-- > 0) {
             File dir = new File(path + sp + "dir");
             dir.mkdir();
@@ -53,6 +63,7 @@ public class BaseTest {
         return returnValue;
     }
 
+    // 文件夹为dir,文件名为file.txt, 则正常
     protected void validateFileNameTrue(File file) throws IOException {
         if (isFileMaskFile(file)) {
             return;
@@ -87,13 +98,14 @@ public class BaseTest {
         return false;
     }
 
+    // 文件夹不为dir,文件名不为file.txt, 则正常
     protected void validateFileNameFalse(File file) throws IOException {
 
         if (isFileMaskFile(file)) {
             return;
         }
         File[] files = file.listFiles();
-        if (files != null && files.length> 0) {
+        if (files != null && files.length > 0) {
             for (File one : files) {
                 if (one.isDirectory()) {
                     if (isFileMaskFile(one)) {
@@ -137,7 +149,7 @@ public class BaseTest {
     // 级联删除文件夹下所有数据 不包含外面的文件夹
     protected void removeFileAndDir(File file, boolean isFirst) {
         if (!file.getPath().contains("测试")) {
-            throw new MaskException(10000,"费测试文件禁止删除");
+            throw new MaskException(10000, "费测试文件禁止删除");
         }
         File[] files = file.listFiles();
         if (files != null && files.length > 0) {

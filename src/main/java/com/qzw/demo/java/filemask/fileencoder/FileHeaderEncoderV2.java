@@ -22,9 +22,19 @@ public class FileHeaderEncoderV2 extends AbstractFileEncoderV2 {
         return FileEncoderTypeEnum.FILE_HEADER_ENCODE;
     }
 
+    /**
+     * 加密方式2, 加密的文件首部字节数
+     */
+    private final int HEAD_BYTE_LEN_32 = 32;
     @Override
     protected byte[][] encryptOriginFile(File fileOrDir, byte[] extraParam) {
         try (RandomAccessFile raf = new RandomAccessFile(fileOrDir, "rw")) {
+            // 重点测试 todo test
+            if (raf.length()< HEAD_BYTE_LEN_32) {
+                // 返回null 表示加密不成功
+                log.info("文件长度小于32字节, 不支持方式2加密",fileOrDir.getPath());
+                return null;
+            }
             raf.seek(0);
             byte[] originHead = new byte[32];
             raf.read(originHead);
@@ -48,6 +58,9 @@ public class FileHeaderEncoderV2 extends AbstractFileEncoderV2 {
     protected boolean decryptOriginFile(File fileOrDir, byte[] extraParam) {
         byte[] originHeader = extraParam;
         try (RandomAccessFile raf = new RandomAccessFile(fileOrDir, "rw")) {
+            if (raf.length()< HEAD_BYTE_LEN_32) {
+                return false;
+            }
             raf.seek(0);
             raf.write(originHeader);
         } catch (IOException e) {
