@@ -15,6 +15,16 @@ import java.io.File;
  */
 public class MainTest {
 
+    @Test
+    public void testNull() {
+        String xx = null;
+        test(xx.concat(""));
+    }
+
+    public void test(String a) {
+        System.out.println(a);
+    }
+
 //------------------------------加密方式 一 ----------------------------------------------------//
 
     @Test
