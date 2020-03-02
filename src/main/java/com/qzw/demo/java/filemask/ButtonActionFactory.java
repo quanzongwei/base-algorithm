@@ -383,9 +383,13 @@ public class ButtonActionFactory {
                     return;
                 }
                 try {
-                    new FileOrDirNameEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.CASCADE_DIR);
-                    new FileHeaderEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.CASCADE_DIR);
+                    // 解密顺序很重要啊, 如果先使用方式一解密, 那么文件名称被修改, 使用文件二解密会抛出文件不存在异常
+                    //方式三
                     new FileContentEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.CASCADE_DIR);
+                    //方式二
+                    new FileHeaderEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.CASCADE_DIR);
+                    //方式一
+                    new FileOrDirNameEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.CASCADE_DIR);
                 } catch (FileHideException ex) {
                     label.setText(ex.getMessage());
                     if (ex.getCode().equals(FileHideException.FILE_RENAME_ERROR)) {
@@ -422,9 +426,12 @@ public class ButtonActionFactory {
                     return;
                 }
                 try {
-                    new FileOrDirNameEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.CURRENT_DIR_ONLY);
-                    new FileHeaderEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.CURRENT_DIR_ONLY);
+                    //方式三
                     new FileContentEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.CURRENT_DIR_ONLY);
+                    //方式二
+                    new FileHeaderEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.CURRENT_DIR_ONLY);
+                    //方式一
+                    new FileOrDirNameEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.CURRENT_DIR_ONLY);
                 } catch (FileHideException ex) {
                     label.setText(ex.getMessage());
                     if (ex.getCode().equals(FileHideException.FILE_RENAME_ERROR)) {
@@ -461,9 +468,12 @@ public class ButtonActionFactory {
                     return;
                 }
                 try {
-                    new FileOrDirNameEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.FILE_ONLY);
-                    new FileHeaderEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.FILE_ONLY);
+                    //方式三
                     new FileContentEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.FILE_ONLY);
+                    //方式二
+                    new FileHeaderEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.FILE_ONLY);
+                    //方式一
+                    new FileOrDirNameEncoderV2().decodeFileOrDir(new File(targetDir), DirChooseEnum.FILE_ONLY);
                 } catch (FileHideException ex) {
                     label.setText(ex.getMessage());
                     if (ex.getCode().equals(FileHideException.FILE_RENAME_ERROR)) {
@@ -497,6 +507,7 @@ public class ButtonActionFactory {
             testDir.mkdir();
             // todo 隐藏
         }
+        testDir = new File("D:\\Data\\测试");
         fileChooser.setCurrentDirectory(testDir);
         fileChooser.setDialogTitle(message);
         fileChooser.setApproveButtonText("确定");
