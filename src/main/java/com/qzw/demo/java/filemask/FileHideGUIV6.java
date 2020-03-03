@@ -54,14 +54,15 @@ public class FileHideGUIV6 {
         f = new Frame("FileMask");
         f.setLayout(new BorderLayout(0, 10));
 
-        f.setSize(650, 580);
+        f.setSize(650, 600);
         f.setLocation(300, 50);
 
         f.setIconImage(Toolkit.getDefaultToolkit().createImage("qq.png"));
-        f.setVisible(true);
+        // 这里提前可见, 出现了渲染时差问题, 导致部分组件没有渲染出来
+        // f.setVisible(true);
         f.addWindowListener(new MyWinAdapter());
 
-        f.setResizable(false);
+        f.setResizable(true);
         menuBar = new MenuBar();
         menu = new Menu("file");
         menuItem4Open = new MenuItem("open");
@@ -97,10 +98,15 @@ public class FileHideGUIV6 {
 
 
         Panel panelCombine1 = new Panel(new BorderLayout(0, 10));
+        panelCombine1.setMaximumSize(new Dimension(650, 90));
+        panelCombine1.setMinimumSize(new Dimension(650, 90));
+
         panelCombine1.add(panel1, BorderLayout.NORTH);
         panelCombine1.add(panel2, BorderLayout.CENTER);
 
         Panel panelCombine2 = new Panel(new BorderLayout(0, 10));
+        panelCombine1.setMaximumSize(new Dimension(650, 90));
+        panelCombine1.setMinimumSize(new Dimension(650, 90));
         panelCombine2.add(panel3, BorderLayout.NORTH);
         panelCombine2.add(panel4, BorderLayout.CENTER);
 
@@ -109,11 +115,17 @@ public class FileHideGUIV6 {
         // 中
         f.add(panelCombine2, BorderLayout.CENTER);
 
+        Panel panelCombine3 = new Panel(new BorderLayout(0, 10));
+        panelCombine3.add(panelCombine1, BorderLayout.NORTH);
+        panelCombine3.add(panelCombine2, BorderLayout.CENTER);
+
 
         ta = new TextArea();
-        ta.setPreferredSize(new Dimension(0, 200));
         // 南
-        f.add(ta, BorderLayout.SOUTH);
+        f.add(panelCombine3, BorderLayout.NORTH);
+        //中
+        f.add(ta, BorderLayout.CENTER);
+
 
         // 阻塞其他事件
         dialog = new Dialog(f, "提示", true);
@@ -142,6 +154,7 @@ public class FileHideGUIV6 {
         ButtonActionFactory.btn41(btn41);
         ButtonActionFactory.btn42(btn42);
         ButtonActionFactory.btn43(btn43);
+        f.setVisible(true);
     }
 
     private static void encryptContentEventResolver() {

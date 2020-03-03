@@ -12,7 +12,8 @@ public class PanelFactory {
     public static Panel generatePanelItem(Button btn1, Button btn2, Button btn3, String label) {
         Panel panel = new Panel(new BorderLayout(0,10));
         panel.setBackground(new Color(190, 190, 190));
-        panel.setPreferredSize(new Dimension(0, 70));
+        panel.setMinimumSize(new Dimension(650, 40));
+        panel.setMaximumSize(new Dimension(650,40));
         Panel subPanel1 = new Panel(new FlowLayout(FlowLayout.LEFT));
         subPanel1.add(new Label(label));
         Panel subPanel2 = new Panel(new FlowLayout(FlowLayout.RIGHT));
