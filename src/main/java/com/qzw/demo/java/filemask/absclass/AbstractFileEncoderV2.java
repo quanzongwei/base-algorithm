@@ -6,6 +6,7 @@ import com.qzw.demo.java.filemask.enums.FileEncoderTypeEnum;
 import com.qzw.demo.java.filemask.exception.MaskException;
 import com.qzw.demo.java.filemask.interfaces.FileEncoderType;
 import com.qzw.demo.java.filemask.interfaces.PasswordHandler;
+import com.qzw.demo.java.filemask.util.PrivateDataUtils;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
@@ -28,7 +29,7 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
         if (!fileOrDir.exists()) {
             throw new MaskException(1000, "文件或者文件夹不存在解密加密失败," + fileOrDir.getPath());
         }
-        if (isFileMaskFile(fileOrDir)) {
+        if (PrivateDataUtils.isFileMaskFile(fileOrDir)) {
             log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
             return;
         }
@@ -71,7 +72,7 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
         if (!fileOrDir.exists()) {
             throw new MaskException(10000, "文件或者文件夹不存在,解密失败, " + fileOrDir.getPath());
         }
-        if (isFileMaskFile(fileOrDir)) {
+        if (PrivateDataUtils.isFileMaskFile(fileOrDir)) {
             log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
             return;
         }
@@ -101,14 +102,6 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
         }
     }
 
-    protected boolean isFileMaskFile(File file) {
-        boolean fileMask = file.getPath().contains(".fileMask");
-        if (fileMask) {
-            return true;
-        }
-        return false;
-    }
-
 
     protected byte[] xorBySecretKey(byte[] text) {
         byte[] byte32 = this.get32byteMd5Value();
@@ -121,8 +114,7 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
 
 
     protected void mkPrivateDirIfNotExists(File fileOrDir) {
-        String privateDataDirStr = fileOrDir.getParent() + File.separatorChar + ".fileMask";
-        File file = new File(privateDataDirStr);
+        File file = PrivateDataUtils.getPrivateDataDir(fileOrDir);
         if (!file.exists()) {
             file.mkdir();
             try {
@@ -133,14 +125,13 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
         }
     }
 
-    protected void executeEncrypt(File fileOrDir) {
+    private void executeEncrypt(File fileOrDir) {
         FileEncoderTypeEnum fileEncoderType = getFileEncoderType();
         if (fileOrDir.isDirectory() && !fileEncoderType.isSupportEncryptDir()) {
             // 加密方式不支持加密文件夹, 直接跳过, 不需要任何日志
             return;
         }
-        String pdf = fileOrDir.getParent() + File.separatorChar + ".fileMask" + File.separatorChar + fileOrDir.getName();
-        File privateDataFile = new File(pdf);
+        File privateDataFile = PrivateDataUtils.getPrivateDataFile(fileOrDir);
         boolean exists = privateDataFile.exists();
         byte[] result1 = null;
 
@@ -221,7 +212,7 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
                 // no operation for return bytes, it is only a success flag for this FileEncoderType
             }
         } catch (IOException ex) {
-            log.info("私有数据文件打开失败, 加密操作不成功,{}", pdf);
+            log.info("私有数据文件打开失败, 加密操作不成功,{}", privateDataFile.getPath());
             return;
         }
         // IO操作完成后才可以执行重命名操作
@@ -352,8 +343,8 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
             // 加密方式不支持加密文件夹, 直接跳过, 不需要任何日志
             return;
         }
-        String pdf = fileOrDir.getParent() + File.separatorChar + ".fileMask" + File.separatorChar + fileOrDir.getName();
-        File privateDataFile = new File(pdf);
+        File privateDataFile = PrivateDataUtils.getPrivateDataFile(fileOrDir);
+
         if (!privateDataFile.exists()) {
             log.info("文件从未加密过, 无需解密, {}", fileOrDir.getPath());
             return;

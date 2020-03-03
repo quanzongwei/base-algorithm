@@ -4,6 +4,7 @@ import com.qzw.demo.java.filemask.absclass.AbstractFileEncoderV2;
 import com.qzw.demo.java.filemask.component.PasswordHolder;
 import com.qzw.demo.java.filemask.enums.DirChooseEnum;
 import com.qzw.demo.java.filemask.enums.FileEncoderTypeEnum;
+import com.qzw.demo.java.filemask.util.PrivateDataUtils;
 import lombok.extern.log4j.Log4j2;
 import org.junit.Test;
 
@@ -23,13 +24,15 @@ public class FileOrDirNameEncoderV2 extends AbstractFileEncoderV2 {
         return FileEncoderTypeEnum.FILE_OR_DIR_NAME_ENCODE;
     }
 
-    public static int sequence = 0;
-
-
     @Override
     protected byte[][] encryptOriginFile(File fileOrDir, byte[] extraParam) {
+        Integer sequence = PrivateDataUtils.getAutoIncrementSequence4ParentDir(fileOrDir);
+        if (sequence == null) {
+            log.info("加密方式一, 序列号获取失败, 加密失败");
+            return null;
+        }
         String originName = fileOrDir.getName();
-        String targetName = (fileOrDir.isDirectory() ? "nDDir" : "nDFiLe") + sequence++;
+        String targetName = (fileOrDir.isDirectory() ? "nDDir" : "nDFiLe") + sequence;
         String targetPath = fileOrDir.getParent() + File.separatorChar + targetName;
         // todo test change 名字还是原来的名字, 确实是的
         boolean b = fileOrDir.renameTo(new File(targetPath));
