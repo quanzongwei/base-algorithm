@@ -372,7 +372,7 @@ public class ButtonActionFactory {
             @Override
             public void actionPerformed(ActionEvent e) {
                 long begin = System.currentTimeMillis();
-                String targetDir = directoryAndFileChooseV2(JFileChooser.FILES_AND_DIRECTORIES, "请选择文件夹...");
+                String targetDir = directoryAndFileChooseV2(JFileChooser.DIRECTORIES_ONLY, "请选择文件夹...");
                 if (targetDir == null) {
                     // 用户点击取消按钮, 取消加密
                     return;

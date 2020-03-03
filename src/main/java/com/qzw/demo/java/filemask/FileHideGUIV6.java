@@ -1,7 +1,5 @@
 package com.qzw.demo.java.filemask;
 
-import com.qzw.demo.java.filehide.FileHideException;
-import com.qzw.demo.java.filehide.FileHideV6;
 import lombok.extern.log4j.Log4j2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,7 +54,7 @@ public class FileHideGUIV6 {
         f = new Frame("FileMask");
         f.setLayout(new BorderLayout(0, 10));
 
-        f.setSize(650, 550);
+        f.setSize(650, 580);
         f.setLocation(300, 50);
 
         f.setIconImage(Toolkit.getDefaultToolkit().createImage("qq.png"));
@@ -92,11 +90,11 @@ public class FileHideGUIV6 {
         Panel panel3 = PanelFactory.generatePanelItem(btn31, btn32, btn33, "加密方式三:文件内容加密(加密速度较慢, 1G大小的文件耗时约10秒)");
 
 
-        Button btn41 = new Button("一件解密");
-        Panel panel4 = new Panel(new FlowLayout(FlowLayout.RIGHT));
-        panel4.setBackground(new Color(199, 199, 199));
-        panel4.add(btn41);
-        panel4.setSize(600, 20);
+        Button btn41 = new Button("文件夹级联解密");
+        Button btn42 = new Button("文件夹解密");
+        Button btn43 = new Button("文件解密");
+        Panel panel4 = PanelFactory.generatePanelItem(btn41, btn42, btn43, "文件解密(系统自动识别文件的加密类型, 并执行解密操作)");
+
 
         Panel panelCombine1 = new Panel(new BorderLayout(0, 10));
         panelCombine1.add(panel1, BorderLayout.NORTH);
@@ -116,8 +114,6 @@ public class FileHideGUIV6 {
         ta.setPreferredSize(new Dimension(0, 200));
         // 南
         f.add(ta, BorderLayout.SOUTH);
-        f.setResizable(true);
-
 
         // 阻塞其他事件
         dialog = new Dialog(f, "提示", true);
@@ -142,7 +138,10 @@ public class FileHideGUIV6 {
         ButtonActionFactory.btn31(btn31);
         ButtonActionFactory.btn32(btn32);
         ButtonActionFactory.btn33(btn33);
+
         ButtonActionFactory.btn41(btn41);
+        ButtonActionFactory.btn42(btn42);
+        ButtonActionFactory.btn43(btn43);
     }
 
     private static void encryptContentEventResolver() {
