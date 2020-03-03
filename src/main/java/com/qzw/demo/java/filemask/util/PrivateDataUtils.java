@@ -55,7 +55,7 @@ public class PrivateDataUtils {
         try (RandomAccessFile raf = new RandomAccessFile(file, "rw")) {
             raf.seek(0);
             if (raf.length() == 0) {
-                raf.writeInt(0);
+                raf.writeInt(1);
                 return 0;
             }
             int sequence = raf.readInt();
