@@ -53,9 +53,14 @@ public class FileHideGUIV6 {
     public static void main(String[] args) {
         f = new Frame("FileMask");
         f.setLayout(new BorderLayout(0, 10));
+//        f.setBackground(Color.gray);
 
+        // 位置
         f.setSize(650, 600);
-        f.setLocation(300, 50);
+        int x = (Toolkit.getDefaultToolkit().getScreenSize().width - f.getSize().width) / 2;
+        int y = (Toolkit.getDefaultToolkit().getScreenSize().height - f.getSize().height) / 2;
+        f.setLocation(x, y);
+
 
         f.setIconImage(Toolkit.getDefaultToolkit().createImage("qq.png"));
         // 这里提前可见, 出现了渲染时差问题, 导致部分组件没有渲染出来
@@ -69,7 +74,7 @@ public class FileHideGUIV6 {
         menuItem4Exit = new MenuItem("exit");
 
         menuBar.add(menu);
-        menu.add(menuItem4Open);
+//        menu.add(menuItem4Open);
         menu.add(menuItem4Exit);
 
         f.setMenuBar(menuBar);
@@ -121,6 +126,12 @@ public class FileHideGUIV6 {
 
 
         ta = new TextArea();
+        ta.setForeground(new Color(56,131,56));
+
+//        ta.setBackground(Color.darkGray);
+//        ta.setForeground(Color.black);
+//        ta.setBackground(new Color(162,162,162));
+//        ta.setBackground(Color.lightGray);
         // 南
         f.add(panelCombine3, BorderLayout.NORTH);
         //中
@@ -129,13 +140,23 @@ public class FileHideGUIV6 {
 
         // 阻塞其他事件
         dialog = new Dialog(f, "提示", true);
-        dialog.setLayout(new FlowLayout());
+        dialog.setLayout(new BorderLayout());
         dialogOkBtn = new Button("OK");
         label = new Label();
-        dialog.add(label);
-        dialog.add(dialogOkBtn);
-        dialog.setLocation(400, 100);
-        dialog.setSize(200, 200);
+        label.setAlignment(Label.CENTER);
+        dialog.add(label, BorderLayout.NORTH);
+
+        Panel dialogPanel = new Panel(new FlowLayout(FlowLayout.CENTER));
+        dialogPanel.add(dialogOkBtn);
+
+
+        dialog.add(dialogPanel, BorderLayout.CENTER);
+        dialog.setSize(200, 100);
+        // 对话框位置
+        int x1 = (f.getSize().width - dialog.getSize().width) / 2 + (int) f.getLocation().getX();
+        int y1 = (f.getSize().height - dialog.getSize().height) / 2 + (int) f.getLocation().getY();
+        dialog.setLocation(x1, y1);
+        //
         eventResolver();
         // btn事件绑定
 

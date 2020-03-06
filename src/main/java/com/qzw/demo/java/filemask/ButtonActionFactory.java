@@ -59,6 +59,7 @@ public class ButtonActionFactory {
                 }
                 label.setText("加密成功!");
                 ta.append("加密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
                 dialog.setVisible(true);
             }
         });
@@ -96,6 +97,8 @@ public class ButtonActionFactory {
                 }
                 label.setText("加密成功!");
                 ta.append("加密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
+
                 dialog.setVisible(true);
 
             }
@@ -134,6 +137,8 @@ public class ButtonActionFactory {
                 }
                 label.setText("加密成功!");
                 ta.append("加密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
+
                 dialog.setVisible(true);
 
             }
@@ -172,6 +177,8 @@ public class ButtonActionFactory {
                 }
                 label.setText("加密成功!");
                 ta.append("加密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
+
                 dialog.setVisible(true);
 
             }
@@ -210,6 +217,8 @@ public class ButtonActionFactory {
                 }
                 label.setText("加密成功!");
                 ta.append("加密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
+
                 dialog.setVisible(true);
 
             }
@@ -248,6 +257,8 @@ public class ButtonActionFactory {
                 }
                 label.setText("加密成功!");
                 ta.append("加密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
+
                 dialog.setVisible(true);
 
             }
@@ -286,6 +297,8 @@ public class ButtonActionFactory {
                 }
                 label.setText("加密成功!");
                 ta.append("加密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
+
                 dialog.setVisible(true);
 
             }
@@ -324,6 +337,8 @@ public class ButtonActionFactory {
                 }
                 label.setText("加密成功!");
                 ta.append("加密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
+
                 dialog.setVisible(true);
 
             }
@@ -361,6 +376,8 @@ public class ButtonActionFactory {
                 }
                 label.setText("加密成功!");
                 ta.append("加密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
+
                 dialog.setVisible(true);
             }
         });
@@ -404,6 +421,7 @@ public class ButtonActionFactory {
                 }
                 label.setText("解密成功!");
                 ta.append("解密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
                 dialog.setVisible(true);
             }
         });
@@ -446,6 +464,7 @@ public class ButtonActionFactory {
                 }
                 label.setText("解密成功!");
                 ta.append("解密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+                ta.append("\r\n");
                 dialog.setVisible(true);
             }
         });
@@ -488,6 +507,8 @@ public class ButtonActionFactory {
                 }
                 label.setText("解密成功!");
                 ta.append("解密成功,耗时:" + (System.currentTimeMillis() - begin) + "ms; 文件名: " + targetDir);
+
+                ta.append("\r\n");
                 dialog.setVisible(true);
             }
         });

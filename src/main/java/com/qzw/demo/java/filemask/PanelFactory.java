@@ -18,14 +18,20 @@ public class PanelFactory {
         subPanel1.add(new Label(label));
         Panel subPanel2 = new Panel(new FlowLayout(FlowLayout.RIGHT));
         if (btn1 != null) {
+//            btn1.setBackground(Color.lightGray);
+//            btn1.setBackground(new Color(162,162,162));
             subPanel2.add(btn1);
         }
         if (btn2 != null) {
+//            btn2.setBackground(Color.lightGray);
+//            btn2.setBackground(new Color(162,162,162));
             subPanel2.add(btn2);
         }
         subPanel2.add(btn3);
         panel.add(subPanel1,BorderLayout.NORTH);
         panel.add(subPanel2,BorderLayout.CENTER);
+//        btn3.setBackground(Color.lightGray);
+//        btn3.setBackground(new Color(162,162,162));
         return panel;
     }
 }
