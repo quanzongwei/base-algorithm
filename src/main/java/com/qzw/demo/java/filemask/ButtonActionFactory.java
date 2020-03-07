@@ -21,14 +21,14 @@ import java.io.File;
 @Log4j2
 public class ButtonActionFactory {
 
-    static Label label = FileHideGUIV6.label;
-    static TextArea ta = FileHideGUIV6.ta;
+    static JLabel label = FileHideGUIV7.label;
+    static JTextArea ta = FileHideGUIV7.ta;
 
-    static Dialog dialog = FileHideGUIV6.dialog;
-    static Frame f = FileHideGUIV6.f;
+    static JDialog dialog = FileHideGUIV7.dialog;
+    static JFrame f = FileHideGUIV7.f;
 
 
-    public static void btn11(Button btn) {
+    public static void btn11(JButton btn) {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -65,7 +65,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn12(Button btn) {
+    public static void btn12(JButton btn) {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -105,7 +105,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn13(Button btn) {
+    public static void btn13(JButton btn) {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -145,7 +145,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn21(Button btn) {
+    public static void btn21(JButton btn) {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -185,7 +185,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn22(Button btn) {
+    public static void btn22(JButton btn) {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -225,7 +225,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn23(Button btn) {
+    public static void btn23(JButton btn) {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -265,7 +265,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn31(Button btn) {
+    public static void btn31(JButton btn) {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -305,7 +305,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn32(Button btn) {
+    public static void btn32(JButton btn) {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -345,7 +345,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn33(Button btn) {
+    public static void btn33(JButton btn) {
         btn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -383,7 +383,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn41(Button button) {
+    public static void btn41(JButton button) {
 
         button.addActionListener(new ActionListener() {
             @Override
@@ -427,7 +427,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn42(Button button) {
+    public static void btn42(JButton button) {
 
         button.addActionListener(new ActionListener() {
             @Override
@@ -470,7 +470,7 @@ public class ButtonActionFactory {
         });
     }
 
-    public static void btn43(Button button) {
+    public static void btn43(JButton button) {
 
         button.addActionListener(new ActionListener() {
             @Override
