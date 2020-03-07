@@ -39,7 +39,7 @@ public class ButtonActionFactory {
                     return;
                 }
                 if (!isValidPath(targetDir)) {
-                    label.setText("加密路径不合法, 请重新选择!");
+                    label.setText("加密路径太短, 请重新选择则!");
                     dialog.setVisible(true);
                     return;
                 }
@@ -77,7 +77,7 @@ public class ButtonActionFactory {
                     return;
                 }
                 if (!isValidPath(targetDir)) {
-                    label.setText("加密路径不合法, 请重新选择!");
+                    label.setText("加密路径太短, 请重新选择则!");
                     dialog.setVisible(true);
                     return;
                 }
@@ -117,7 +117,7 @@ public class ButtonActionFactory {
                     return;
                 }
                 if (!isValidPath(targetDir)) {
-                    label.setText("加密路径不合法, 请重新选择!");
+                    label.setText("加密路径太短, 请重新选择则!");
                     dialog.setVisible(true);
                     return;
                 }
@@ -157,7 +157,7 @@ public class ButtonActionFactory {
                     return;
                 }
                 if (!isValidPath(targetDir)) {
-                    label.setText("加密路径不合法, 请重新选择!");
+                    label.setText("加密路径太短, 请重新选择则!");
                     dialog.setVisible(true);
                     return;
                 }
@@ -197,7 +197,7 @@ public class ButtonActionFactory {
                     return;
                 }
                 if (!isValidPath(targetDir)) {
-                    label.setText("加密路径不合法, 请重新选择!");
+                    label.setText("加密路径太短, 请重新选择则!");
                     dialog.setVisible(true);
                     return;
                 }
@@ -237,7 +237,7 @@ public class ButtonActionFactory {
                     return;
                 }
                 if (!isValidPath(targetDir)) {
-                    label.setText("加密路径不合法, 请重新选择!");
+                    label.setText("加密路径太短, 请重新选择则!");
                     dialog.setVisible(true);
                     return;
                 }
@@ -277,7 +277,7 @@ public class ButtonActionFactory {
                     return;
                 }
                 if (!isValidPath(targetDir)) {
-                    label.setText("加密路径不合法, 请重新选择!");
+                    label.setText("加密路径太短, 请重新选择则!");
                     dialog.setVisible(true);
                     return;
                 }
@@ -317,7 +317,7 @@ public class ButtonActionFactory {
                     return;
                 }
                 if (!isValidPath(targetDir)) {
-                    label.setText("加密路径不合法, 请重新选择!");
+                    label.setText("加密路径太短, 请重新选择则!");
                     dialog.setVisible(true);
                     return;
                 }
@@ -356,7 +356,7 @@ public class ButtonActionFactory {
                     return;
                 }
                 if (!isValidPath(targetDir)) {
-                    label.setText("加密路径不合法, 请重新选择!");
+                    label.setText("加密路径太短, 请重新选择则!");
                     dialog.setVisible(true);
                     return;
                 }
@@ -549,8 +549,6 @@ public class ButtonActionFactory {
 
     public static boolean isValidPath(String targetPath) {
         if (targetPath.length() <= 3) {
-            return false;
-        } else if (!targetPath.contains("test")&&!targetPath.contains("测试")) {
             return false;
         }
         return true;

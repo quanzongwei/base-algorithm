@@ -16,6 +16,7 @@ import java.io.RandomAccessFile;
 public class PrivateDataUtils {
 
     public static String PRIVATE_DATA_DIR = ".fileMask";
+    public static String PRAVATE_String = "fileMask";
 
 
     /**
@@ -39,7 +40,7 @@ public class PrivateDataUtils {
     }
 
     public static boolean isFileMaskFile(File file) {
-        boolean fileMask = file.getPath().contains(PRIVATE_DATA_DIR);
+        boolean fileMask = file.getPath().contains(PRIVATE_DATA_DIR) || file.getPath().contains(PRAVATE_String);
         if (fileMask) {
             return true;
         }

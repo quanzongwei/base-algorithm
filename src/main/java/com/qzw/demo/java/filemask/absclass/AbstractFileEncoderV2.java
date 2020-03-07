@@ -23,45 +23,54 @@ import java.util.stream.Collectors;
 public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEncoderType {
 
     /**
+     * 确保加解密串行执行
+     * <p>
+     * 一只合格小白鼠在测试的时候, 说一看是程序卡住了,估计是多点了几下, 出现了无法解密的情况; 经过仔细分析,只有可能加解密过程未加锁
+     * 导致了并发的访问,造成的错误,这个比较难复现,加上lock是最保险的做法
+     */
+    public static Object lock = new Object();
+    /**
      * entry method
      */
     public void encodeFileOrDir(File fileOrDir, DirChooseEnum dirChooseEnum) {
-        if (!fileOrDir.exists()) {
-            throw new MaskException(1000, "文件或者文件夹不存在解密加密失败," + fileOrDir.getPath());
-        }
-        if (PrivateDataUtils.isFileMaskFile(fileOrDir)) {
-            log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
-            return;
-        }
-        if (dirChooseEnum.equals(DirChooseEnum.FILE_ONLY)) {
+        synchronized (lock) {
+            if (!fileOrDir.exists()) {
+                throw new MaskException(1000, "文件或者文件夹不存在解密加密失败," + fileOrDir.getPath());
+            }
+            if (PrivateDataUtils.isFileMaskFile(fileOrDir)) {
+                log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
+                return;
+            }
+            if (dirChooseEnum.equals(DirChooseEnum.FILE_ONLY)) {
 
-            this.mkPrivateDirIfNotExists(fileOrDir);
-            executeEncrypt(fileOrDir);
-        } else if (dirChooseEnum.equals(DirChooseEnum.CURRENT_DIR_ONLY)) {
-            this.mkPrivateDirIfNotExists(fileOrDir);
-            File[] files = fileOrDir.listFiles();
-            if (files != null && files.length > 0) {
-                this.mkPrivateDirIfNotExists(files[0]);
-                for (File file : files) {
-                    executeEncrypt(file);
-                }
-            }
-            executeEncrypt(fileOrDir);
-        } else if (dirChooseEnum.equals(DirChooseEnum.CASCADE_DIR)) {
-            this.mkPrivateDirIfNotExists(fileOrDir);
-            File[] files = fileOrDir.listFiles();
-            if (files != null && files.length > 0) {
-                this.mkPrivateDirIfNotExists(files[0]);
-                for (File file : files) {
-                    //cascade directory
-                    if (file.isDirectory()) {
-                        encodeFileOrDir(file, DirChooseEnum.CASCADE_DIR);
-                        continue;
+                this.mkPrivateDirIfNotExists(fileOrDir);
+                executeEncrypt(fileOrDir);
+            } else if (dirChooseEnum.equals(DirChooseEnum.CURRENT_DIR_ONLY)) {
+                this.mkPrivateDirIfNotExists(fileOrDir);
+                File[] files = fileOrDir.listFiles();
+                if (files != null && files.length > 0) {
+                    this.mkPrivateDirIfNotExists(files[0]);
+                    for (File file : files) {
+                        executeEncrypt(file);
                     }
-                    executeEncrypt(file);
                 }
+                executeEncrypt(fileOrDir);
+            } else if (dirChooseEnum.equals(DirChooseEnum.CASCADE_DIR)) {
+                this.mkPrivateDirIfNotExists(fileOrDir);
+                File[] files = fileOrDir.listFiles();
+                if (files != null && files.length > 0) {
+                    this.mkPrivateDirIfNotExists(files[0]);
+                    for (File file : files) {
+                        //cascade directory
+                        if (file.isDirectory()) {
+                            encodeFileOrDir(file, DirChooseEnum.CASCADE_DIR);
+                            continue;
+                        }
+                        executeEncrypt(file);
+                    }
+                }
+                executeEncrypt(fileOrDir);
             }
-            executeEncrypt(fileOrDir);
         }
     }
 
@@ -69,36 +78,38 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
      * entry method
      */
     public void decodeFileOrDir(File fileOrDir, DirChooseEnum dirChooseEnum) {
-        if (!fileOrDir.exists()) {
-            throw new MaskException(10000, "文件或者文件夹不存在,解密失败, " + fileOrDir.getPath());
-        }
-        if (PrivateDataUtils.isFileMaskFile(fileOrDir)) {
-            log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
-            return;
-        }
-        if (dirChooseEnum.equals(DirChooseEnum.FILE_ONLY)) {
-            executeDecrypt(fileOrDir);
-        } else if (dirChooseEnum.equals(DirChooseEnum.CURRENT_DIR_ONLY)) {
-            File[] files = fileOrDir.listFiles();
-            if (files != null && files.length > 0) {
-                for (File file : files) {
-                    executeDecrypt(file);
-                }
+        synchronized (lock) {
+            if (!fileOrDir.exists()) {
+                throw new MaskException(10000, "文件或者文件夹不存在,解密失败, " + fileOrDir.getPath());
             }
-            executeDecrypt(fileOrDir);
-        } else if (dirChooseEnum.equals(DirChooseEnum.CASCADE_DIR)) {
-            File[] files = fileOrDir.listFiles();
-            if (files != null && files.length > 0) {
-                for (File file : files) {
-                    //cascade directory
-                    if (file.isDirectory()) {
-                        decodeFileOrDir(file, DirChooseEnum.CASCADE_DIR);
-                        continue;
+            if (PrivateDataUtils.isFileMaskFile(fileOrDir)) {
+                log.info("私有数据文件无需处理, {}", fileOrDir.getPath());
+                return;
+            }
+            if (dirChooseEnum.equals(DirChooseEnum.FILE_ONLY)) {
+                executeDecrypt(fileOrDir);
+            } else if (dirChooseEnum.equals(DirChooseEnum.CURRENT_DIR_ONLY)) {
+                File[] files = fileOrDir.listFiles();
+                if (files != null && files.length > 0) {
+                    for (File file : files) {
+                        executeDecrypt(file);
                     }
-                    executeDecrypt(file);
                 }
+                executeDecrypt(fileOrDir);
+            } else if (dirChooseEnum.equals(DirChooseEnum.CASCADE_DIR)) {
+                File[] files = fileOrDir.listFiles();
+                if (files != null && files.length > 0) {
+                    for (File file : files) {
+                        //cascade directory
+                        if (file.isDirectory()) {
+                            decodeFileOrDir(file, DirChooseEnum.CASCADE_DIR);
+                            continue;
+                        }
+                        executeDecrypt(file);
+                    }
+                }
+                executeDecrypt(fileOrDir);
             }
-            executeDecrypt(fileOrDir);
         }
     }
 
