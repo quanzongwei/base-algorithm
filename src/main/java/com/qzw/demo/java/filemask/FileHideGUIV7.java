@@ -4,20 +4,25 @@ import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DesertBluer;
 import com.qzw.demo.java.filemask.util.AuthenticationUtils;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.CharSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sun.awt.image.PixelConverter;
+import sun.nio.cs.ext.MacCroatian;
+import sun.plugin.javascript.JSClassLoader;
+import sun.reflect.generics.scope.Scope;
+import sun.util.locale.provider.JRELocaleConstants;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileSystemView;
+import javax.swing.text.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.IOException;
-import java.io.RandomAccessFile;
+import java.io.*;
 
 /**
  * v2 支持选择文件夹
@@ -42,8 +47,12 @@ public class FileHideGUIV7 {
     public static JLabel label;
     static JMenuBar menuBar;
     static JMenu menu;
+    static JMenu menu2;
+    static JMenu menu3;
     static JMenuItem menuItem4Open = null;
     static JMenuItem menuItem4Exit = null;
+    static JMenuItem menuItem4Help = null;
+    static JMenuItem menuItem4Contact = null;
 
     static JButton btn4NameEncrypt = new JButton("文件名称加密");
     static JButton btn4NameDecrypt = new JButton("文件名称解密");
@@ -89,11 +98,21 @@ public class FileHideGUIV7 {
 
         f.setResizable(true);
         menuBar = new JMenuBar();
-        menu = new JMenu("file");
+
+        menu = new JMenu("文件");
+        menu2 = new JMenu("使用帮助");
+//        menu3 = new JMenu("联系作者");
         menuItem4Open = new JMenuItem("open");
-        menuItem4Exit = new JMenuItem("exit");
+        menuItem4Exit = new JMenuItem("退出");
+        menuItem4Help = new JMenuItem("使用帮助");
+        menuItem4Contact = new JMenuItem("联系作者");
+
+        menu2.add(menuItem4Help);
+        menu2.add(menuItem4Contact);
 
         menuBar.add(menu);
+        menuBar.add(menu2);
+//        menuBar.add(menu3);
 //        menu.add(menuItem4Open);
         menu.add(menuItem4Exit);
 
@@ -366,6 +385,12 @@ public class FileHideGUIV7 {
     }
 
 
+    private static void setLabel(JLabel label) {
+        label.setMaximumSize(new Dimension(200,30));
+        label.setMinimumSize(new Dimension(200,30));
+    }
+
+
     private static void eventResolver() {
         //事件
         menuItem4Exit.addActionListener(new ActionListener() {
@@ -375,7 +400,156 @@ public class FileHideGUIV7 {
             }
         });
 
+        //事件
+        menuItem4Help.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame jFrame = new JFrame("使用说明文档");
+                jFrame.setMaximumSize(new Dimension(300,300));
+                jFrame.setMinimumSize(new Dimension(300,300));
 
+                JPanel jpanel = new JPanel(new FlowLayout());
+                jpanel.setMaximumSize(new Dimension(300, 300));
+                jpanel.setMinimumSize(new Dimension(300, 300));
+                JLabel label1 = new JLabel("                                      ");
+                JLabel label2 = new JLabel("使用说明: https://blog.csdn.net/starcrm/article/details/52576423");
+
+                JLabel label3 = new JLabel("                              ");
+                JLabel label4 = new JLabel("原理说明: https://blog.csdn.net/starcrm/article/details/52576423");
+                JLabel label5 = new JLabel("                             ");
+                JLabel label6 = new JLabel("花絮: https://blog.csdn.net/starcrm/article/details/52576423");
+                JLabel label7 = new JLabel("                           ");
+                JLabel label8 = new JLabel("常见问题: https://blog.csdn.net/starcrm/article/details/52576423");
+                JLabel label9 = new JLabel("                              ");
+                setLabel(label1);
+                setLabel(label2);
+                setLabel(label3);
+                setLabel(label4);
+                setLabel(label5);
+                setLabel(label6);
+                setLabel(label7);
+                setLabel(label8);
+                setLabel(label9);
+                jpanel.add(label1);
+                jpanel.add(label2);
+                jpanel.add(label3);
+                jpanel.add(label4);
+                jpanel.add(label5);
+                jpanel.add(label6);
+                jpanel.add(label7);
+                jpanel.add(label8);
+                jpanel.add(label9);
+
+                //
+                JTextPane jTextPane = new JTextPane();
+                JPanel jPanel = new JPanel();
+                jpanel.add(jTextPane);
+
+                jTextPane.setAutoscrolls(true);
+
+                Container container = jFrame.getContentPane();
+                JTextArea jTextArea = new JTextArea();
+                JScrollPane scrollPane = new JScrollPane(jTextPane);
+//                scrollPane.setMaximumSize(new Dimension(650,700));
+//                scrollPane.setMaximumSize(new Dimension(650,700));
+                StringBuilder text = new StringBuilder("");
+                File file = new File("D:\\Data\\测试\\使用说明2.html");
+
+                scrollPane.add(jpanel);
+
+//                Highlighter highLighter = new DefaultHighlighter();
+//                jTextPane.setHighlighter(highLighter);
+                StringContent sc = new StringContent(15000);
+                try (BufferedReader bf = new BufferedReader(new InputStreamReader(new FileInputStream(file),"UTF-8"))) {
+                    String s = "";
+                    while ((s = bf.readLine())!= null) {
+                        text.append(s);
+                        text.append("\n");
+                        jTextArea.append(s);
+                        jTextArea.append("\n");
+
+                    }
+                } catch (FileNotFoundException ex) {
+                    ex.printStackTrace();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+
+                jTextArea.append("<HTML>Click the <FONT color=\\\"#000099\\\"><U>link</U></FONT>\"\n" +
+                        "        + \" to go to the Java website.</HTML>");
+//                try {
+////                    sc.insertString(0, text.toString());
+//                } catch (BadLocationException ex) {
+//                    ex.printStackTrace();
+//                }
+
+
+//                container.add(scrollPane);
+                jTextPane.setContentType("text/html");
+                jTextPane.setText(text.toString());
+
+                container.add(scrollPane);
+
+
+
+                jFrame.setSize(800, 800);
+                int x = (Toolkit.getDefaultToolkit().getScreenSize().width - jFrame.getSize().width) / 2;
+                int y = (Toolkit.getDefaultToolkit().getScreenSize().height - jFrame.getSize().height) / 2;
+                jFrame.setLocation(x, y>f.getLocation().getY()? (int) f.getLocation().getY() :y);
+
+                //
+                jFrame.setVisible(true);
+
+            }
+        });
+
+        menuItem4Contact.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame jFrame = new JFrame("有任何问题,欢迎联系作者~~");
+                jFrame.setSize(new Dimension(400,200));
+
+                Container container = jFrame.getContentPane();
+                container.setLayout(new BorderLayout(0,0));
+                container.setSize(new Dimension(400,400));
+
+                JLabel jLabel = new JLabel("作者邮箱: 552114141@qq.com");
+                jLabel.setSize(new Dimension(400,30));
+
+//                JLabel jLabel2 = new JLabel("作者微信: quanzongwei");
+                JLabel jLabel2 = new JLabel("Hello <font color=\\\"#00ff00\\\">World</font>");
+                jLabel.setSize(new Dimension(400,30));
+
+//                container.add(new Label());
+//
+//                container.add(new Label());
+//                container.add(jLabel);
+//                container.add(new Label());
+//                container.add(jLabel2);
+//                container.add(new Label());
+//                container.add(new Label());
+
+                JTextPane jTextPane =new JTextPane();
+                jTextPane.setContentType("text/html");
+
+                jTextPane.setText("<html>\n" +
+                        "<p>\n" +
+                        "<h2 align=\"center\">作者邮箱: <font color=\"red\">552114141@qq.com</font></h2>\n" +
+                        "<h2 align=\"center\">作者微信: <font color=\"red\">quanzongwei</font></h2>\n" +
+                        "</p>\n" +
+                        "</html>");
+
+                container.add(jTextPane);
+
+
+
+                int x = (Toolkit.getDefaultToolkit().getScreenSize().width - jFrame.getSize().width) / 2;
+                int y = (Toolkit.getDefaultToolkit().getScreenSize().height - jFrame.getSize().height) / 2;
+                jFrame.setLocation(x, y);
+                //
+                jFrame.setVisible(true);
+            }
+        });
         menuItem4Open.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
