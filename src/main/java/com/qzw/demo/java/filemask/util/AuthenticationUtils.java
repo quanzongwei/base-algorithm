@@ -14,8 +14,8 @@ import java.util.Arrays;
 @Log4j2
 public class AuthenticationUtils {
 
-    static String AUTH_FILE_NAME = "/auth.fileMask"; 
-    static String AUTH_DIR_NAME = "/authentication";
+    static String AUTH_FILE_NAME = File.separatorChar + "auth.fileMask";
+    static String AUTH_DIR_NAME = File.separatorChar + "authentication";
     public static boolean isExistUserPassword() {
         String dir = System.getProperty("user.dir") + AUTH_DIR_NAME;
         File file = new File(dir);

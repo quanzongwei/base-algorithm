@@ -239,19 +239,20 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
     private byte[] getResultByMap(byte[] bytes, byte[] encodeMap, boolean isEncodeOperation) {
         if (isEncodeOperation) {
             //todo 中文编码问题 不存在这个问题, JVM获取系统的编码, 再读取文件名,修改后又使用系统的编码写入
-            log.info("加密操作 encode map base64 value:{}", Base64.getEncoder().encodeToString(encodeMap));
-            log.info("加密操作, 需要加密的字节对应String bytes:{}", new String(bytes));
-            log.info("加密操作 bytes对应的base 64 编码bytes:{}", Base64.getEncoder().encodeToString(bytes));
+            //todo 本地调试需要开启哦
+//            log.info("加密操作 encode map base64 value:{}", Base64.getEncoder().encodeToString(encodeMap));
+//            log.info("加密操作, 需要加密的字节对应String bytes:{}", new String(bytes));
+//            log.info("加密操作 bytes对应的base 64 编码bytes:{}", Base64.getEncoder().encodeToString(bytes));
             for (int j = 0; j < bytes.length; j++) {
                 bytes[j] = encodeMap[ByteUtil.getUnsignedByte(bytes[j])];
             }
-            log.info("加密操作 加密后bytes对应的base 64 编码bytes:{}", Base64.getEncoder().encodeToString(bytes));
-            log.info("加密操作 加密后bytes对应的字符串:{}", new String(bytes));
+//            log.info("加密操作 加密后bytes对应的base 64 编码bytes:{}", Base64.getEncoder().encodeToString(bytes));
+//            log.info("加密操作 加密后bytes对应的字符串:{}", new String(bytes));
 
         } else {
-            log.info("解密操作 encode map base64 value:{}", Base64.getEncoder().encodeToString(encodeMap));
-            log.info("解密操作, 需要解密的字节对应String bytes:{}", new String(bytes));
-            log.info("解密操作 bytes解密后对应的的base 64 编码:{}", Base64.getEncoder().encodeToString(bytes));
+//            log.info("解密操作 encode map base64 value:{}", Base64.getEncoder().encodeToString(encodeMap));
+//            log.info("解密操作, 需要解密的字节对应String bytes:{}", new String(bytes));
+//            log.info("解密操作 bytes解密后对应的的base 64 编码:{}", Base64.getEncoder().encodeToString(bytes));
             byte[] decodeMap = new byte[256];
             for (int i = 0; i < encodeMap.length; i++) {
                 decodeMap[ByteUtil.getUnsignedByte(encodeMap[i])] = (byte) i;
@@ -259,8 +260,8 @@ public abstract class AbstractFileEncoderV2 implements PasswordHandler, FileEnco
             for (int j = 0; j < bytes.length; j++) {
                 bytes[j] = decodeMap[ByteUtil.getUnsignedByte(bytes[j])];
             }
-            log.info("解密操作 解密后bytes对应的base64编码:{}", Base64.getEncoder().encodeToString(bytes));
-            log.info("解密操作 解密后bytes对应的字符串:{}", new String(bytes));
+//            log.info("解密操作 解密后bytes对应的base64编码:{}", Base64.getEncoder().encodeToString(bytes));
+//            log.info("解密操作 解密后bytes对应的字符串:{}", new String(bytes));
 
         }
         return bytes;

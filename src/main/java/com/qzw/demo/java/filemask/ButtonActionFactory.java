@@ -360,6 +360,7 @@ public class ButtonActionFactory {
                     dialog.setVisible(true);
                     return;
                 }
+                // 加密软件运行中
                 try {
                     new FileContentEncoderV2().encodeFileOrDir(new File(targetDir), DirChooseEnum.FILE_ONLY);
                 } catch (FileHideException ex) {

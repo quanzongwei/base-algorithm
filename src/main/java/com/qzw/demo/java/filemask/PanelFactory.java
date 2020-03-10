@@ -40,7 +40,7 @@ public class PanelFactory {
 
 
 //        panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY),label));
-        panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createStrokeBorder(s), "加密方式一:文件名称加密(对目标文件夹下所有的文件和文件夹的名称进行加密)"));
+        panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createStrokeBorder(s), label));
 //        panel.setBounds(2,2,650-2-2,40-2-2);
 
 

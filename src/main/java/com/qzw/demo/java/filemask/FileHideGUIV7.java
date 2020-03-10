@@ -4,19 +4,13 @@ import com.jgoodies.looks.plastic.PlasticLookAndFeel;
 import com.jgoodies.looks.plastic.theme.DesertBluer;
 import com.qzw.demo.java.filemask.util.AuthenticationUtils;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.lang3.CharSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.awt.image.PixelConverter;
-import sun.nio.cs.ext.MacCroatian;
-import sun.plugin.javascript.JSClassLoader;
-import sun.reflect.generics.scope.Scope;
-import sun.util.locale.provider.JRELocaleConstants;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileSystemView;
-import javax.swing.text.*;
+import javax.swing.text.StringContent;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,6 +24,8 @@ import java.io.*;
  * v4 保存v3的一些例子
  * v5 移动到filemask中
  * v6 pannel移动到一个PanelFactory类中,并给出button click的监听事件
+ * v7 新增使用帮助文档和联系作者
+ * v8 支持中断功能
  *
  * @author BG388892
  * @date 2020/1/3
@@ -54,6 +50,8 @@ public class FileHideGUIV7 {
     static JMenuItem menuItem4Help = null;
     static JMenuItem menuItem4Contact = null;
 
+    static JDialog cancelDialog;
+
     static JButton btn4NameEncrypt = new JButton("文件名称加密");
     static JButton btn4NameDecrypt = new JButton("文件名称解密");
 
@@ -77,7 +75,7 @@ public class FileHideGUIV7 {
         } catch (Exception e) {
             log.error("UI样式设置出错", e);
         }
-
+        cancelDialog = new JDialog(f, "提示");
         f = new JFrame("FileMask");
         SwingUtilities.updateComponentTreeUI(f);
 
@@ -122,18 +120,18 @@ public class FileHideGUIV7 {
         JButton btn11 = new JButton("文件夹级联加密");
         JButton btn12 = new JButton("文件夹加密");
         JButton btn13 = new JButton("文件加密");
-        JPanel panel1 = PanelFactory.generatePanelItem(btn11, btn12, btn13, "加密方式一:文件名称加密(支持对文件夹的名称加密)");
+        JPanel panel1 = PanelFactory.generatePanelItem(btn11, btn12, btn13, "加密类型一:文件名称加密(支持对文件夹的名称加密)");
 
 
         JButton btn21 = new JButton("文件夹级联加密");
         JButton btn22 = new JButton("文件夹加密");
         JButton btn23 = new JButton("文件加密");
-        JPanel panel2 = PanelFactory.generatePanelItem(btn21, btn22, btn23, "加密方式二:文件头部加密");
+        JPanel panel2 = PanelFactory.generatePanelItem(btn21, btn22, btn23, "加密类型二:文件头部加密");
 
         JButton btn31 = new JButton("文件夹级联加密");
         JButton btn32 = new JButton("文件夹加密");
         JButton btn33 = new JButton("文件加密");
-        JPanel panel3 = PanelFactory.generatePanelItem(btn31, btn32, btn33, "加密方式三:文件内容加密(加密速度较慢, 1G大小的文件耗时约10秒)");
+        JPanel panel3 = PanelFactory.generatePanelItem(btn31, btn32, btn33, "加密类型三:文件内容加密(加密速度较慢, 1G大小的文件耗时约10秒)");
 
 
         JButton btn41 = new JButton("文件夹级联解密");
@@ -453,7 +451,9 @@ public class FileHideGUIV7 {
 //                scrollPane.setMaximumSize(new Dimension(650,700));
 //                scrollPane.setMaximumSize(new Dimension(650,700));
                 StringBuilder text = new StringBuilder("");
-                File file = new File("D:\\Data\\测试\\使用说明2.html");
+
+                File file = new File(System.getProperty("user.dir") + File.separatorChar + "doc" + File.separatorChar
+                        + "readme.html");
 
                 scrollPane.add(jpanel);
 
