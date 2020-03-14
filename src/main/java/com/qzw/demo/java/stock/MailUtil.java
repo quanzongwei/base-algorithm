@@ -12,56 +12,49 @@ import java.util.Properties;
  * @author BG388892
  * @date 2020/3/10
  */
-public class MailTest {
-    private static String mailFrom = null;// 指明邮件的发件人
-    private static String password_mailFrom = null;// 指明邮件的发件人登陆密码
-    private static String mailTo = null;	// 指明邮件的收件人
-    private static String mailTittle = null;// 邮件的标题
-    private static String mailText =null;	// 邮件的文本内容
-    private static String mail_host =null;	// 邮件的服务器域名
+public class MailUtil {
 
-    public static void main(String[] args) throws Exception {
-//        mailFrom = "2568449023@qq.com";
-//        // qq设置账户
-//        password_mailFrom="osbuckdtcxbieafa22";
-//        mailTo = "552114141@qq.com";
-//        mailTittle="节日快乐2！";
-//        mailText = "NIHAOSHI ASD ASD ASD AS";
-//        mail_host="smtp.qq.com";
+    public static void sendMessage(String title, String content) throws Exception {
+        String mailFrom = "2568449023@qq.com";
+        String password_mailFrom = "osbuckdtcxbieafa22";
+        String mailTo = "552114141@qq.com";
+        String mailTittle = "生日快乐！";
+        String mailText = "同学你好,生日快乐!!!";
+        String mail_host = "smtp.qq.com";
 
-        mailFrom = "quanzongwei@natpag.onexmail.com";
-        // qq设置账户
-        password_mailFrom="q98899889S22";
-        mailTo = "552114141@qq.com";
-//        mailTo = "quanzongwei@natpag.onexmail.com";
-        mailTittle="节日快乐2！";
-        mailText = "admin message";
-        mail_host="smtp.exmail.qq.com";
-//        mail_host="smtp.139.com";
+        if (title != null && !title.trim().equals("")) {
+            mailTittle = title;
+        }
+
+        if (content != null && !content.trim().equals("")) {
+            mailText = content;
+        }
 
         Properties prop = new Properties();
         prop.setProperty("mail.host", mail_host);
         prop.setProperty("mail.transport.protocol", "smtp");
         prop.setProperty("mail.smtp.auth", "true");
-
-        // 使用JavaMail发送邮件的5个步骤
+        //
+        prop.setProperty("mail.smtp.auth", "true");//开启认证
+        prop.setProperty("mail.debug", "true");//启用调试
+        prop.setProperty("mail.smtp.timeout", "1000");//设置链接超时
+        prop.setProperty("mail.smtp.port", "465");//设置端口
+        prop.setProperty("mail.smtp.socketFactory.port", "465");//设置ssl端口
+        prop.setProperty("mail.smtp.socketFactory.fallback", "false");
+        prop.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 
         // 1、创建session
         Session session = Session.getInstance(prop);
         // 开启Session的debug模式，这样就可以查看到程序发送Email的运行状态
-//        session.setDebug(true);
+        session.setDebug(false);
         // 2、通过session得到transport对象
         Transport ts = session.getTransport();
         // 3、使用邮箱的用户名和密码连上邮件服务器，发送邮件时，发件人需要提交邮箱的用户名和密码给smtp服务器，用户名和密码都通过验证之后才能够正常发送邮件给收件人。
-        ts.connect(mail_host,mailFrom, password_mailFrom);
+        ts.connect(mail_host, mailFrom, password_mailFrom);
         // 4、创建邮件
-        Message message = createSimpleMail(session,mailFrom,mailTo,mailTittle,mailText);
+        Message message = createSimpleMail(session, mailFrom, mailTo, mailTittle, mailText);
         // 5、发送邮件
-        int i=10000;
-        while (i-->0) {
-            ts.sendMessage(message, message.getAllRecipients());
-            System.out.println(i);
-        }
+        ts.sendMessage(message, message.getAllRecipients());
         ts.close();
     }
 
@@ -86,3 +79,4 @@ public class MailTest {
         return message;
     }
 }
+
